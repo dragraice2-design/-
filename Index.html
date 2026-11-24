@@ -2,507 +2,550 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#eef2ff">
-<title>Спиральный переход — симулятор</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <meta name="theme-color" content="#eef2ff">
+  <meta name="description" content="Учебный симулятор спирального орбитального перехода с малой постоянной тягой.">
+
+  <link rel="stylesheet" href="./style.css">
+
+  <title>Спиральный переход — симулятор</title>
 </head>
 
 <body class="spiral-shell">
 
 <main id="spiral-transfer-app" class="spiral-app">
 
-<header class="hero">
+  <!-- Шапка приложения -->
+  <header class="hero">
+
     <div class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 48 48">
-            <circle cx="24" cy="24" r="7"/>
-            <path d="M7 24c0-9.4 7.6-17 17-17 11.5 0 20.5 10.4 16.5 21.2C36.8 38.2 23 43 13.2 35.6 4.8 29.2 7.4 16.4 18 13c8.6-2.8 17 4.2 15.4 12.6-1.2 6.5-9 10-14.3 6.2-4.1-3-3.4-9.7.8-11.8"/>
-        </svg>
+      <svg viewBox="0 0 48 48" focusable="false">
+        <circle cx="24" cy="24" r="7"/>
+        <path d="M7 24c0-9.4 7.6-17 17-17 11.5 0 20.5 10.4 16.5 21.2C36.8 38.2 23 43 13.2 35.6 4.8 29.2 7.4 16.4 18 13c8.6-2.8 17 4.2 15.4 12.6-1.2 6.5-9 10-14.3 6.2-4.1-3-3.4-9.7.8-11.8"/>
+      </svg>
     </div>
 
     <div>
-        <p class="eyebrow">
-            Орбитальная лаборатория · электрореактивная тяга
-        </p>
+      <p class="eyebrow">
+        Орбитальная лаборатория · электрореактивная тяга
+      </p>
 
-        <h1>Спиральный переход</h1>
+      <h1>Спиральный переход</h1>
 
-        <p class="hero-copy">
-            Настройте малую постоянную тягу и поднимите аппарат
-            на целевую орбиту. Модель учитывает гравитацию,
-            направление тяги, расход рабочего тела и изменение массы.
-        </p>
+      <p class="hero-copy">
+        Настройте малую постоянную тягу и поднимите аппарат
+        на целевую орбиту. Модель учитывает гравитацию,
+        направление тяги, расход рабочего тела и изменение массы.
+      </p>
     </div>
 
     <div class="model-badge">
-        <span class="pulse-dot"></span>
-        Плоская двухтельная модель
+      <span class="pulse-dot" aria-hidden="true"></span>
+      Плоская двухтельная модель
     </div>
-</header>
 
+  </header>
 
-<section class="workspace" aria-label="Панель симулятора">
+  <!-- Основная рабочая область -->
+  <section class="workspace" aria-label="Панель симулятора">
 
-<!-- ПАНЕЛЬ УПРАВЛЕНИЯ -->
+    <!-- Панель управления -->
+    <aside class="control-panel card">
 
-<aside class="control-panel card">
-
-    <div class="section-heading">
+      <div class="section-heading">
         <div>
-            <span class="step">01</span>
-            <h2>Параметры миссии</h2>
+          <span class="step">01</span>
+          <h2>Параметры миссии</h2>
         </div>
 
-        <button class="text-button" id="defaultButton" type="button">
-            Сбросить значения
+        <button
+          class="text-button"
+          id="defaultButton"
+          type="button">
+          Сбросить значения
         </button>
-    </div>
+      </div>
 
+      <form id="missionForm">
 
-    <form id="missionForm">
-
+        <!-- Орбиты -->
         <fieldset>
-            <legend>Орбиты</legend>
+          <legend>Орбиты</legend>
 
-            <div class="field-grid">
+          <div class="field-grid">
 
-                <label class="field">
-                    Начальная высота, км
-                    <input id="initialAltitude"
-                        name="initialAltitude"
-                        type="number"
-                        min="160"
-                        max="2000"
-                        step="10"
-                        value="300"
-                        required
-                        inputmode="decimal"
-                        enterkeyhint="next">
-                </label>
+            <label class="field">
+              Начальная высота, км
 
-                <label class="field">
-                    Целевая высота, км
-                    <input id="targetAltitude"
-                        name="targetAltitude"
-                        type="number"
-                        min="200"
-                        max="36000"
-                        step="10"
-                        value="800"
-                        required
-                        inputmode="decimal"
-                        enterkeyhint="next">
-                </label>
-
-            </div>
-        </fieldset>
-
-
-        <fieldset>
-            <legend>Аппарат и двигатель</legend>
-
-            <div class="field-grid">
-
-                <label class="field">
-                    Сухая масса, кг
-                    <input id="dryMass"
-                        name="dryMass"
-                        type="number"
-                        min="50"
-                        max="5000"
-                        step="10"
-                        value="450"
-                        required
-                        inputmode="decimal"
-                        enterkeyhint="next">
-                </label>
-
-                <label class="field">
-                    Рабочее тело, кг
-                    <input id="propellant"
-                        name="propellant"
-                        type="number"
-                        min="0.1"
-                        max="1000"
-                        step="0.1"
-                        value="50"
-                        required
-                        inputmode="decimal"
-                        enterkeyhint="next">
-                </label>
-
-                <label class="field">
-                    Тяга, мН
-                    <input id="thrust"
-                        name="thrust"
-                        type="number"
-                        min="10"
-                        max="5000"
-                        step="10"
-                        value="350"
-                        required
-                        inputmode="decimal"
-                        enterkeyhint="next">
-                </label>
-
-                <label class="field">
-                    Удельный импульс, с
-                    <input id="isp"
-                        name="isp"
-                        type="number"
-                        min="200"
-                        max="5000"
-                        step="50"
-                        value="1800"
-                        required
-                        inputmode="decimal"
-                        enterkeyhint="next">
-                </label>
-
-            </div>
-        </fieldset>
-
-
-        <fieldset>
-            <legend>Программа полёта</legend>
-
-            <label class="field range-field" for="thrustAngle">
-
-                <span>
-                    Направление тяги
-                    <output id="angleOutput" for="thrustAngle">0°</output>
-                </span>
-
-                <input id="thrustAngle"
-                    name="thrustAngle"
-                    type="range"
-                    min="-45"
-                    max="45"
-                    step="1"
-                    value="0">
-
-                <small>
-                    0° — вдоль движения;
-                    «+» — от Земли;
-                    «−» — к Земле.
-                </small>
-
+              <input
+                id="initialAltitude"
+                name="initialAltitude"
+                type="number"
+                min="160"
+                max="2000"
+                step="10"
+                value="300"
+                required
+                inputmode="decimal"
+                enterkeyhint="next">
             </label>
 
+            <label class="field">
+              Целевая высота, км
 
-            <div class="field-grid">
-
-                <label class="field">
-                    Лимит времени, суток
-                    <input id="durationDays"
-                        name="durationDays"
-                        type="number"
-                        min="0.5"
-                        max="60"
-                        step="0.5"
-                        value="10"
-                        required
-                        inputmode="decimal"
-                        enterkeyhint="next">
-                </label>
-
-                <label class="field">
-                    Скорость просмотра
-
-                    <select id="playbackSpeed" name="playbackSpeed">
-                        <option value="1">1×</option>
-                        <option value="2">2×</option>
-                        <option value="4" selected>4×</option>
-                        <option value="8">8×</option>
-                    </select>
-                </label>
-
-            </div>
-
-
-            <label class="switch-row">
-
-                <input id="autoStop"
-                    name="autoStop"
-                    type="checkbox"
-                    checked>
-
-                <span class="switch"></span>
-
-                <span>
-                    <strong>Автостоп у цели</strong>
-                    <small>
-                        Остановить тягу при достижении
-                        целевой средней высоты.
-                    </small>
-                </span>
-
+              <input
+                id="targetAltitude"
+                name="targetAltitude"
+                type="number"
+                min="200"
+                max="36000"
+                step="10"
+                value="800"
+                required
+                inputmode="decimal"
+                enterkeyhint="next">
             </label>
+
+          </div>
+        </fieldset>
+
+        <!-- Аппарат и двигатель -->
+        <fieldset>
+          <legend>Аппарат и двигатель</legend>
+
+          <div class="field-grid">
+
+            <label class="field">
+              Сухая масса, кг
+
+              <input
+                id="dryMass"
+                name="dryMass"
+                type="number"
+                min="50"
+                max="5000"
+                step="10"
+                value="450"
+                required
+                inputmode="decimal"
+                enterkeyhint="next">
+            </label>
+
+            <label class="field">
+              Рабочее тело, кг
+
+              <input
+                id="propellant"
+                name="propellant"
+                type="number"
+                min="0.1"
+                max="1000"
+                step="0.1"
+                value="50"
+                required
+                inputmode="decimal"
+                enterkeyhint="next">
+            </label>
+
+            <label class="field">
+              Тяга, мН
+
+              <input
+                id="thrust"
+                name="thrust"
+                type="number"
+                min="10"
+                max="5000"
+                step="10"
+                value="350"
+                required
+                inputmode="decimal"
+                enterkeyhint="next">
+            </label>
+
+            <label class="field">
+              Удельный импульс, с
+
+              <input
+                id="isp"
+                name="isp"
+                type="number"
+                min="200"
+                max="5000"
+                step="50"
+                value="1800"
+                required
+                inputmode="decimal"
+                enterkeyhint="next">
+            </label>
+
+          </div>
+        </fieldset>
+
+        <!-- Программа полёта -->
+        <fieldset>
+          <legend>Программа полёта</legend>
+
+          <label class="field range-field" for="thrustAngle">
+
+            <span>
+              Направление тяги
+
+              <output id="angleOutput" for="thrustAngle">
+                0°
+              </output>
+            </span>
+
+            <input
+              id="thrustAngle"
+              name="thrustAngle"
+              type="range"
+              min="-45"
+              max="45"
+              step="1"
+              value="0">
+
+            <small>
+              0° — вдоль движения; «+» — от Земли; «−» — к Земле.
+            </small>
+
+          </label>
+
+          <div class="field-grid">
+
+            <label class="field">
+              Лимит времени, суток
+
+              <input
+                id="durationDays"
+                name="durationDays"
+                type="number"
+                min="0.5"
+                max="60"
+                step="0.5"
+                value="10"
+                required
+                inputmode="decimal"
+                enterkeyhint="next">
+            </label>
+
+            <label class="field">
+              Скорость просмотра
+
+              <select
+                aria-label="Скорость просмотра"
+                id="playbackSpeed"
+                name="playbackSpeed">
+
+                <option value="1">1×</option>
+                <option value="2">2×</option>
+                <option value="4" selected>4×</option>
+                <option value="8">8×</option>
+
+              </select>
+            </label>
+
+          </div>
+
+          <label class="switch-row">
+
+            <input
+              id="autoStop"
+              name="autoStop"
+              type="checkbox"
+              checked>
+
+            <span class="switch" aria-hidden="true"></span>
+
+            <span>
+              <strong>Автостоп у цели</strong>
+
+              <small>
+                Остановить тягу при достижении целевой средней высоты.
+              </small>
+            </span>
+
+          </label>
 
         </fieldset>
 
-
-        <div id="formError"
-            class="form-error"
-            role="alert"
-            hidden>
+        <!-- Ошибки заполнения -->
+        <div
+          id="formError"
+          class="form-error"
+          role="alert"
+          hidden>
         </div>
 
-
+        <!-- Кнопки управления -->
         <div class="action-row">
 
-            <button class="primary-button"
-                id="startButton"
-                type="submit">
-                Запустить моделирование
-            </button>
+          <button
+            class="primary-button"
+            id="startButton"
+            type="submit">
+            Запустить моделирование
+          </button>
 
-            <button class="secondary-button"
-                id="pauseButton"
-                type="button"
-                disabled>
-                Пауза
-            </button>
+          <button
+            class="secondary-button"
+            id="pauseButton"
+            type="button"
+            disabled>
+            Пауза
+          </button>
 
         </div>
 
-    </form>
+      </form>
 
-</aside>
+    </aside>
 
+    <!-- Правая рабочая колонка -->
+    <div class="mission-column">
 
-<!-- ОБЛАСТЬ РЕЗУЛЬТАТОВ -->
-
-<div class="mission-column">
-
-    <section class="metrics" aria-label="Текущие показатели">
+      <!-- Текущие показатели -->
+      <section class="metrics" aria-label="Текущие показатели">
 
         <article class="metric-card">
-            <span>Время полёта</span>
-            <strong id="timeMetric">0 ч 00 мин</strong>
-            <small id="progressMetric">0% сценария</small>
+          <span>Время полёта</span>
+          <strong id="timeMetric">0 ч 00 мин</strong>
+          <small id="progressMetric">0% сценария</small>
         </article>
 
         <article class="metric-card">
-            <span>Высота</span>
-            <strong id="altitudeMetric">300 км</strong>
-            <small id="targetMetric">цель 800 км</small>
+          <span>Высота</span>
+          <strong id="altitudeMetric">300 км</strong>
+          <small id="targetMetric">цель 800 км</small>
         </article>
 
         <article class="metric-card">
-            <span>Скорость</span>
-            <strong id="speedMetric">7,73 км/с</strong>
-            <small>инерциальная</small>
+          <span>Скорость</span>
+          <strong id="speedMetric">7,73 км/с</strong>
+          <small>инерциальная</small>
         </article>
 
         <article class="metric-card">
-            <span>Рабочее тело</span>
-            <strong id="fuelMetric">50,00 кг</strong>
-            <small id="consumedMetric">
-                израсходовано 0,00 кг
-            </small>
+          <span>Рабочее тело</span>
+          <strong id="fuelMetric">50,00 кг</strong>
+          <small id="consumedMetric">
+            израсходовано 0,00 кг
+          </small>
         </article>
 
-    </section>
+      </section>
 
-
-    <!-- ОТОБРАЖЕНИЕ ОРБИТЫ -->
-
-    <section class="orbit-card card">
+      <!-- Визуализация орбиты -->
+      <section class="orbit-card card">
 
         <div class="section-heading compact">
 
-            <div>
-                <span class="step">02</span>
-                <h2>Динамика орбиты</h2>
-            </div>
+          <div>
+            <span class="step">02</span>
+            <h2>Динамика орбиты</h2>
+          </div>
 
-            <div id="runStatus" class="status-pill"
-                role="status"
-                aria-live="polite">
-                Готово к запуску
-            </div>
+          <div
+            id="runStatus"
+            class="status-pill"
+            role="status"
+            aria-live="polite">
+            Готово к запуску
+          </div>
 
         </div>
 
         <div class="canvas-wrap orbit-wrap">
 
-            <canvas id="orbitCanvas"
-                width="960"
-                height="580"
-                role="img"
-                aria-label="Схема Земли и траектории аппарата">
+          <canvas
+            id="orbitCanvas"
+            width="960"
+            height="580"
+            role="img"
+            aria-label="Схема Земли, траектории аппарата и направления тяги">
 
-                Ваш браузер не поддерживает Canvas.
+            Ваш браузер не поддерживает Canvas.
 
-            </canvas>
+          </canvas>
 
-            <div class="orbit-legend">
+          <div class="orbit-legend" aria-label="Легенда">
 
-                <span>
-                    <i class="legend-line path"></i>
-                    траектория
-                </span>
+            <span>
+              <i class="legend-line path"></i>
+              траектория
+            </span>
 
-                <span>
-                    <i class="legend-line target"></i>
-                    целевая орбита
-                </span>
+            <span>
+              <i class="legend-line target"></i>
+              целевая орбита
+            </span>
 
-                <span>
-                    <i class="legend-arrow"></i>
-                    тяга
-                </span>
+            <span>
+              <i class="legend-arrow"></i>
+              тяга
+            </span>
 
-            </div>
+          </div>
 
         </div>
 
-    </section>
+      </section>
 
-
-    <!-- ГРАФИК ВЫСОТЫ -->
-
-    <section class="chart-card card">
+      <!-- График высоты -->
+      <section class="chart-card card">
 
         <div class="section-heading compact">
 
-            <div>
-                <span class="step">03</span>
-                <h2>График высоты</h2>
-            </div>
+          <div>
+            <span class="step">03</span>
+            <h2>График высоты</h2>
+          </div>
 
-            <p id="trendText" class="trend-text">
-                Запустите модель, чтобы увидеть рост орбиты.
-            </p>
+          <p id="trendText" class="trend-text">
+            Запустите модель, чтобы увидеть рост орбиты.
+          </p>
 
         </div>
 
         <div class="canvas-wrap chart-wrap">
 
-            <canvas id="altitudeChart"
-                width="960"
-                height="330"
-                role="img"
-                aria-label="График высоты аппарата по времени">
+          <canvas
+            id="altitudeChart"
+            width="960"
+            height="330"
+            role="img"
+            aria-label="График высоты аппарата по времени">
 
-                График высоты по времени.
+            График высоты по времени.
 
-            </canvas>
+          </canvas>
 
         </div>
 
-    </section>
+      </section>
 
-
-    <!-- ИТОГ МИССИИ -->
-
-    <section class="result-card card">
+      <!-- Результаты миссии -->
+      <section
+        class="result-card card"
+        aria-labelledby="resultTitle">
 
         <div class="result-top">
 
-            <div>
-                <span class="step">04</span>
-                <h2 id="resultTitle">Итог миссии</h2>
-            </div>
+          <div>
+            <span class="step">04</span>
+            <h2 id="resultTitle">Итог миссии</h2>
+          </div>
 
-            <strong id="resultBadge" class="result-badge neutral">
-                Нет расчёта
-            </strong>
+          <strong
+            id="resultBadge"
+            class="result-badge neutral">
+            Нет расчёта
+          </strong>
 
         </div>
 
         <p id="resultSummary">
-            Численный итог появится после завершения моделирования.
+          Численный итог появится после завершения моделирования.
         </p>
 
-
+        <!-- Критерии успешности -->
         <div id="criteriaList" class="criteria-list">
 
-            <div class="criterion pending">
-                <span>—</span>
-                <div>
-                    <strong>Высота цели</strong>
-                    <small>
-                        Средняя орбитальная высота должна попасть
-                        в допустимый диапазон.
-                    </small>
-                </div>
-            </div>
+          <div class="criterion pending">
+            <span>—</span>
 
-            <div class="criterion pending">
-                <span>—</span>
-                <div>
-                    <strong>Форма орбиты</strong>
-                    <small>Эксцентриситет не выше 0,05.</small>
-                </div>
-            </div>
+            <div>
+              <strong>Высота цели</strong>
 
-            <div class="criterion pending">
-                <span>—</span>
-                <div>
-                    <strong>Безопасный перицентр</strong>
-                    <small>Не ниже 120 км над поверхностью Земли.</small>
-                </div>
+              <small>
+                Средняя орбитальная высота должна попасть
+                в допустимый диапазон.
+              </small>
             </div>
+          </div>
 
-            <div class="criterion pending">
-                <span>—</span>
-                <div>
-                    <strong>Запас рабочего тела</strong>
-                    <small>
-                        Топливо не должно закончиться
-                        до завершения манёвра.
-                    </small>
-                </div>
+          <div class="criterion pending">
+            <span>—</span>
+
+            <div>
+              <strong>Форма орбиты</strong>
+
+              <small>
+                Эксцентриситет не выше 0,05.
+              </small>
             </div>
+          </div>
+
+          <div class="criterion pending">
+            <span>—</span>
+
+            <div>
+              <strong>Безопасный перицентр</strong>
+
+              <small>
+                Не ниже 120 км над поверхностью Земли.
+              </small>
+            </div>
+          </div>
+
+          <div class="criterion pending">
+            <span>—</span>
+
+            <div>
+              <strong>Запас рабочего тела</strong>
+
+              <small>
+                Топливо не должно закончиться до завершения манёвра.
+              </small>
+            </div>
+          </div>
 
         </div>
 
-
+        <!-- Описание математической модели -->
         <details>
 
-            <summary>
-                Как считается модель и успех?
-            </summary>
+          <summary>
+            Как считается модель и успех?
+          </summary>
 
-            <p>
-                Движение интегрируется в плоскости под действием
-                центральной гравитации и постоянной тяги.
-                Массовый расход равен
-                <code>F/(Isp·g₀)</code>.
-
-                Успех требует попадания средней орбитальной высоты
-                в допуск, эксцентриситета ≤ 0,05,
-                перицентра ≥ 120 км и ненулевого остатка
-                рабочего тела.
-            </p>
+          <p>
+            Движение интегрируется в плоскости под действием
+            центральной гравитации и постоянной тяги.
+            Массовый расход равен
+            <code>F/(Isp·g₀)</code>.
+            Успех требует попадания средней орбитальной высоты
+            в допуск, эксцентриситета ≤ 0,05,
+            перицентра ≥ 120 км и ненулевого остатка рабочего тела.
+          </p>
 
         </details>
 
-    </section>
+      </section>
 
-</div>
-</section>
+    </div>
 
+  </section>
 
-<footer>
+  <!-- Подвал -->
+  <footer>
 
     <p>
-        Учебная модель: не предназначена
-        для проектирования реальных миссий.
+      Учебная модель: не предназначена для проектирования реальных миссий.
     </p>
 
     <p>
-        μ Земли = 3,986004418·10¹⁴ м³/с² · R = 6371 км
+      μ Земли = 3,986004418·10¹⁴ м³/с² · R = 6371 км
     </p>
 
-</footer>
+  </footer>
 
 </main>
 
-<script src="app.js" defer></script>
+<!-- Подключение JavaScript -->
+<script src="./app.js" defer></script>
 
 </body>
 </html>
